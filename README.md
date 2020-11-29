@@ -16,15 +16,32 @@
 [Apex.Serialization]: https://github.com/dbolin/Apex.Serialization
 
 
-[![latest release](https://img.shields.io/badge/latest%20release-v3.0.0-blue)](https://github.com/dadhi/FastExpressionCompiler/releases/edit/untagged-059915d86897b6258eac)
+[![latest release](https://img.shields.io/badge/latest%20release-v3.0.0-blue)](https://www.nuget.org/packages/FastExpressionCompiler.LightExpression/3.0.0-preview-05)
 [![Windows build](https://ci.appveyor.com/api/projects/status/4iyhed69l3k0k37o/branch/master?svg=true)](https://ci.appveyor.com/project/MaksimVolkau/fastexpressioncompiler/branch/master)[![license](https://img.shields.io/github/license/dadhi/FastExpressionCompiler.svg)](http://opensource.org/licenses/MIT)  
 Targets .NET Standard 2.0 and .NET 4.5  
 NuGet packages:
 
-- FastExpressionCompiler [![NuGet Badge](https://buildstats.info/nuget/FastExpressionCompiler)](https://www.nuget.org/packages/FastExpressionCompiler/3.0.0-preview-02)[![fuget.org package api diff](https://www.fuget.org/packages/FastExpressionCompiler/badge.svg?v=3.0.0-preview-02)](https://www.fuget.org/packages/FastExpressionCompiler/3.0.0-preview-02)  
-- FastExpressionCompiler.LightExpression [![NuGet Badge](https://buildstats.info/nuget/FastExpressionCompiler.LightExpression)](https://www.nuget.org/packages/FastExpressionCompiler.LightExpression/3.0.0-preview-02)[![fuget.org package last version](https://www.fuget.org/packages/FastExpressionCompiler.LightExpression/badge.svg?v=3.0.0-preview-02)](https://www.fuget.org/packages/FastExpressionCompiler.LightExpression/3.0.0-preview-02)
+- FastExpressionCompiler [![NuGet Badge](https://buildstats.info/nuget/FastExpressionCompiler)](https://www.nuget.org/packages/FastExpressionCompiler/3.0.0-preview-05)[![fuget.org package api diff](https://www.fuget.org/packages/FastExpressionCompiler/badge.svg?v=3.0.0-preview-05)](https://www.fuget.org/packages/FastExpressionCompiler/3.0.0-preview-05)  
+- FastExpressionCompiler.LightExpression [![NuGet Badge](https://buildstats.info/nuget/FastExpressionCompiler.LightExpression)](https://www.nuget.org/packages/FastExpressionCompiler.LightExpression/3.0.0-preview-05)[![fuget.org package last version](https://www.fuget.org/packages/FastExpressionCompiler.LightExpression/badge.svg?v=3.0.0-preview-05)](https://www.fuget.org/packages/FastExpressionCompiler.LightExpression/3.0.0-preview-05)
 
 Originally is a part of the [DryIoc], so check it out ;-)
+
+- [FastExpressionCompiler](#fastexpressioncompiler)
+  - [The problem](#the-problem)
+  - [The solution](#the-solution)
+  - [Difference between FastExpressionCompiler and FastExpressionCompiler.LightExpression](#difference-between-fastexpressioncompiler-and-fastexpressioncompilerlightexpression)
+  - [Who's using it](#whos-using-it)
+  - [How to use](#how-to-use)
+    - [Examples](#examples)
+  - [Benchmarks](#benchmarks)
+    - [Hoisted expression with the constructor and two arguments in closure](#hoisted-expression-with-the-constructor-and-two-arguments-in-closure)
+    - [Hoisted expression with the static method and two nested lambdas and two arguments in closure](#hoisted-expression-with-the-static-method-and-two-nested-lambdas-and-two-arguments-in-closure)
+    - [Manually composed expression with parameters and closure](#manually-composed-expression-with-parameters-and-closure)
+    - [FastExpressionCompiler.LightExpression.Expression vs System.Linq.Expressions.Expression](#fastexpressioncompilerlightexpressionexpression-vs-systemlinqexpressionsexpression)
+  - [How it works](#how-it-works)
+    - [What's not supported yet](#whats-not-supported-yet)
+  - [Diagnostics](#diagnostics)
+  - [Additional optimizations](#additional-optimizations)
 
 
 ## The problem
@@ -61,12 +78,15 @@ FastExpressionCompiler.LightExpression
 - Provides the `CompileFast` extension methods for `FastExpressionCompiler.LightExpression.LambdaExpression`.
 - Provides the drop-in [Expression replacement](#feclightexpressionexpression-vs-expression) with the faster construction and less memory at the cost of less validation.
 - Includes its own `ExpressionVisitor`.
-- `ToExpression` method to convert back to the System Expression.
-- `ToCSharpString()` method to output the compile-able C# code represented by expression.
-- `ToExpressionString()` method to output the expression construction C# code, so given the expression object you'll get e.g. `Expression.Lambda(Expression.New(...))`.
+
+Both FastExpressionCompiler and FastExpressionCompiler.LightExpression
+
+- Support `ToExpression` method to convert back to the System Expression.
+- Support `ToCSharpString()` method to output the compile-able C# code represented by expression.
+- Support `ToExpressionString()` method to output the expression construction C# code, so given the expression object you'll get e.g. `Expression.Lambda(Expression.New(...))`.
 
 
-## Some users
+## Who's using it
 
 [Marten], [Rebus], [StructureMap], [Lamar], [ExpressionToCodeLib], [NServiceBus]
 
@@ -124,13 +144,15 @@ var x = expr.CompileFast()(new B());
 
 ## Benchmarks
 
+**Updated to .NET 5**
+
 ```ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.572 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.630 (2004/?/20H1)
 Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
-.NET Core SDK=3.1.403
-  [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-  DefaultJob : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+.NET Core SDK=5.0.100
+  [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+  DefaultJob : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
 
 ```
 
@@ -146,17 +168,17 @@ Compiling expression:
 
 |      Method |       Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
 |------------ |-----------:|----------:|----------:|------:|--------:|-------:|-------:|-------:|----------:|
-|     Compile | 233.935 us | 1.2937 us | 1.1468 us | 47.06 |    0.97 | 0.9766 | 0.4883 |      - |   4.35 KB |
-| CompileFast |   4.995 us | 0.0994 us | 0.1184 us |  1.00 |    0.00 | 0.3815 | 0.1907 | 0.0305 |   1.57 KB |
+|     Compile | 274.722 us | 5.3167 us | 5.6888 us | 47.47 |    1.67 | 0.9766 | 0.4883 |      - |   4.52 KB |
+| CompileFast |   5.790 us | 0.1118 us | 0.1197 us |  1.00 |    0.00 | 0.3815 | 0.1907 | 0.0305 |   1.57 KB |
 
 
 Invoking the compiled delegate (comparing to the direct constructor call):
 
-|                Method |      Mean |     Error |    StdDev | Ratio |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|---------------------- |----------:|----------:|----------:|------:|-------:|------:|------:|----------:|
-| DirectConstructorCall |  5.781 ns | 0.1115 ns | 0.1043 ns |  0.51 | 0.0076 |     - |     - |      32 B |
-|        CompiledLambda | 12.581 ns | 0.1318 ns | 0.1169 ns |  1.11 | 0.0076 |     - |     - |      32 B |
-|    FastCompiledLambda | 11.338 ns | 0.1075 ns | 0.1005 ns |  1.00 | 0.0076 |     - |     - |      32 B |
+|                Method |      Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------- |----------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
+| DirectConstructorCall |  7.634 ns | 0.2462 ns | 0.2303 ns |  0.54 |    0.02 | 0.0076 |     - |     - |      32 B |
+|        CompiledLambda | 15.553 ns | 0.1805 ns | 0.1600 ns |  1.09 |    0.02 | 0.0076 |     - |     - |      32 B |
+|    FastCompiledLambda | 14.241 ns | 0.2844 ns | 0.2521 ns |  1.00 |    0.00 | 0.0076 |     - |     - |      32 B |
 
 
 ### Hoisted expression with the static method and two nested lambdas and two arguments in closure
@@ -171,16 +193,16 @@ Compiling expression:
 
 |      Method |      Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
 |------------ |----------:|---------:|---------:|------:|--------:|-------:|-------:|-------:|----------:|
-|     Compile | 460.63 us | 5.937 us | 5.263 us | 27.47 |    0.67 | 2.4414 | 0.9766 |      - |  11.65 KB |
-| CompileFast |  16.77 us | 0.324 us | 0.485 us |  1.00 |    0.00 | 1.1902 | 0.5493 | 0.0916 |   4.86 KB |
+|     Compile | 479.87 us | 5.039 us | 4.208 us | 31.98 |    0.59 | 2.9297 | 1.4648 |      - |  12.17 KB |
+| CompileFast |  15.00 us | 0.291 us | 0.298 us |  1.00 |    0.00 | 1.1902 | 0.5493 | 0.0916 |   4.86 KB |
 
 Invoking compiled delegate comparing to direct method call:
 
 |              Method |        Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |-------------------- |------------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
-|    DirectMethodCall |    53.90 ns |  0.982 ns |  0.918 ns |  1.06 |    0.02 | 0.0401 |     - |     - |     168 B |
-|     Invoke_Compiled | 1,452.80 ns | 16.283 ns | 15.232 ns | 28.44 |    0.37 | 0.0629 |     - |     - |     264 B |
-| Invoke_CompiledFast |    51.11 ns |  0.935 ns |  0.829 ns |  1.00 |    0.00 | 0.0249 |     - |     - |     104 B |
+|    DirectMethodCall |    53.24 ns |  0.721 ns |  0.674 ns |  1.06 |    0.02 | 0.0401 |     - |     - |     168 B |
+|     Invoke_Compiled | 1,486.71 ns | 13.620 ns | 12.741 ns | 29.64 |    0.25 | 0.0629 |     - |     - |     264 B |
+| Invoke_CompiledFast |    50.20 ns |  0.484 ns |  0.404 ns |  1.00 |    0.00 | 0.0248 |     - |     - |     104 B |
 
 
 ### Manually composed expression with parameters and closure
@@ -198,22 +220,22 @@ Compiling expression:
 
 |                      Method |       Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
 |---------------------------- |-----------:|----------:|----------:|------:|--------:|-------:|-------:|-------:|----------:|
-|                     Compile | 174.546 us | 3.3113 us | 3.8133 us | 33.86 |    0.99 | 0.9766 | 0.4883 |      - |   4.59 KB |
-|                 CompileFast |   5.542 us | 0.1056 us | 0.1037 us |  1.07 |    0.03 | 0.3510 | 0.1755 | 0.0305 |   1.46 KB |
-| CompileFast_LightExpression |   5.166 us | 0.0953 us | 0.0892 us |  1.00 |    0.00 | 0.3433 | 0.1678 | 0.0305 |   1.42 KB |
+|                     Compile | 148.633 us | 1.4863 us | 1.2411 us | 33.20 |    1.05 | 0.9766 | 0.4883 |      - |   4.78 KB |
+|                 CompileFast |   4.498 us | 0.0887 us | 0.1022 us |  1.02 |    0.04 | 0.3510 | 0.1755 | 0.0305 |   1.46 KB |
+| CompileFast_LightExpression |   4.365 us | 0.0860 us | 0.1364 us |  1.00 |    0.00 | 0.3433 | 0.1678 | 0.0305 |   1.42 KB |
 
 
 Invoking the compiled delegate compared to the normal delegate and the direct call:
 
-|                             Method |     Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|----------------------------------- |---------:|---------:|---------:|------:|--------:|-------:|------:|------:|----------:|
-|                   DirectLambdaCall | 11.07 ns | 0.183 ns | 0.171 ns |  1.02 |    0.02 | 0.0076 |     - |     - |      32 B |
-|                     CompiledLambda | 12.31 ns | 0.101 ns | 0.090 ns |  1.13 |    0.01 | 0.0076 |     - |     - |      32 B |
-|                 FastCompiledLambda | 10.80 ns | 0.146 ns | 0.137 ns |  1.00 |    0.01 | 0.0076 |     - |     - |      32 B |
-| FastCompiledLambda_LightExpression | 10.86 ns | 0.109 ns | 0.096 ns |  1.00 |    0.00 | 0.0076 |     - |     - |      32 B |
+|                             Method |     Mean |    Error |   StdDev | Ratio |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|----------------------------------- |---------:|---------:|---------:|------:|-------:|------:|------:|----------:|
+|                   DirectLambdaCall | 11.86 ns | 0.140 ns | 0.131 ns |  1.00 | 0.0076 |     - |     - |      32 B |
+|                     CompiledLambda | 13.44 ns | 0.115 ns | 0.096 ns |  1.13 | 0.0076 |     - |     - |      32 B |
+|                 FastCompiledLambda | 12.43 ns | 0.173 ns | 0.154 ns |  1.05 | 0.0076 |     - |     - |      32 B |
+| FastCompiledLambda_LightExpression | 11.87 ns | 0.121 ns | 0.101 ns |  1.00 | 0.0076 |     - |     - |      32 B |
 
 
-### FEC.LightExpression.Expression vs Expression
+### FastExpressionCompiler.LightExpression.Expression vs System.Linq.Expressions.Expression
 
 `FastExpressionCompiler.LightExpression.Expression` is the lightweight version of `System.Linq.Expressions.Expression`. 
 It is designed to be a __drop-in replacement__ for the System Expression - just install the __FastExpressionCompiler.LightExpression__ package instead of __FastExpressionCompiler__ and replace the usings
@@ -240,24 +262,26 @@ Creating the expression:
 
 |                Method |       Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |---------------------- |-----------:|---------:|---------:|------:|--------:|-------:|------:|------:|----------:|
-|      CreateExpression | 3,351.7 ns | 59.81 ns | 55.94 ns | 10.03 |    0.23 | 0.3090 |     - |     - |    1304 B |
-| CreateLightExpression |   334.3 ns |  4.85 ns |  4.53 ns |  1.00 |    0.00 | 0.1316 |     - |     - |     552 B |
+|      CreateExpression | 2,508.2 ns | 44.12 ns | 36.84 ns |  8.83 |    0.14 | 0.3128 |     - |     - |    1312 B |
+| CreateLightExpression |   284.2 ns |  5.19 ns |  4.85 ns |  1.00 |    0.00 | 0.1316 |     - |     - |     552 B |
 
 Creating and compiling:
 
 |                                Method |      Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
 |-------------------------------------- |----------:|---------:|---------:|------:|--------:|-------:|-------:|-------:|----------:|
-|          CreateExpression_and_Compile | 276.65 us | 5.396 us | 7.565 us | 17.73 |    0.73 | 1.4648 | 0.4883 |      - |   7.01 KB |
-|      CreateExpression_and_CompileFast |  21.10 us | 0.418 us | 0.497 us |  1.35 |    0.04 | 1.7700 | 0.8850 | 0.0610 |   7.24 KB |
-| CreateLightExpression_and_CompileFast |  15.70 us | 0.306 us | 0.239 us |  1.00 |    0.00 | 1.5564 | 0.7629 | 0.0305 |   6.46 KB |
+|          CreateExpression_and_Compile | 244.61 us | 4.700 us | 6.111 us | 17.92 |    0.50 | 1.7090 | 0.7324 |      - |    7.2 KB |
+|      CreateExpression_and_CompileFast |  17.69 us | 0.350 us | 0.443 us |  1.31 |    0.04 | 1.8005 | 0.8850 | 0.0305 |   7.36 KB |
+| CreateLightExpression_and_CompileFast |  13.50 us | 0.152 us | 0.143 us |  1.00 |    0.00 | 1.5869 | 0.7935 | 0.0305 |   6.58 KB |
 
 
 ## How it works
 
-The idea is to provide the fast compilation for the supported expression types,
+The idea is to provide the fast compilation for the supported expression types
 and fallback to the system `Expression.Compile()` for the not supported types:
 
-**V3 does not support yet:** 
+### What's not supported yet
+
+**FEC V3 does not support yet:** 
 
 - `Quote`
 - `Dynamic`
@@ -278,7 +302,24 @@ The expression is traversed twice:
 If visitor finds the not supported expression node or the error condition, 
 the compilation is aborted, and `null` is returned enabling the fallback to System `.Compile()`.
 
-### Additional optimizations
+## Diagnostics
+
+FEC V3 adds powerful diagnostics tools.
+
+You may pass the optional `CompilerFlags.EnableDelegateDebugInfo`  into the `CompileFast` methods.
+
+`EnableDelegateDebugInfo` adds the diagnostic info into the compiled delegate including its source Expression and C# code. 
+Can be used as following:
+
+```cs
+var f = e.CompileFast(true, CompilerFlags.EnableDelegateDebugInfo);
+var di = f.Target as IDelegateDebugInfo;
+Assert.IsNotNull(di.Expression);
+Assert.IsNotNull(di.ExpressionString);
+Assert.IsNotNull(di.CSharpString);
+```
+
+## Additional optimizations
 
 1. Using `FastExpressionCompiler.LightExpression.Expression` instead of `System.Linq.Expressions.Expression` for the faster expression creation.  
 2. Using `.TryCompileWithPreCreatedClosure` and `.TryCompileWithoutClosure` methods when you know the expression at hand and may skip the first traversing round, e.g. for the "static" expression which does not contain the bound constants. __Note:__ You cannot skip the 1st round if the expression contains the `Block`, `Try`, or `Goto` expressions.

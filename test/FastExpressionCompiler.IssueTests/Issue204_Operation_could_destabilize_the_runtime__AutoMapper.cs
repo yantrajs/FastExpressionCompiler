@@ -21,8 +21,8 @@ namespace FastExpressionCompiler.IssueTests
 
         public enum Status
         {
-            InProgress = 1,
-            Complete = 2
+            InProgress = 0,
+            Complete = 1
         }
 
         public class OrderWithNullableStatus
@@ -64,7 +64,7 @@ namespace FastExpressionCompiler.IssueTests
             var resolvedValueParam = Parameter(typeof(Status?), "resolvedValue");
             var propertyValueParam = Parameter(typeof(Status?), "propertyValue");
 
-            var expression = Lambda<Func<OrderWithNullableStatus, OrderDtoWithNullableStatus>>(
+            var e = Lambda<Func<OrderWithNullableStatus, OrderDtoWithNullableStatus>>(
                 Block(typeof(OrderDtoWithNullableStatus), new[] { destParam, resolvedValueParam, propertyValueParam },
                     Assign(destParam, New(typeof(OrderDtoWithNullableStatus).GetConstructors()[0])),
                     Assign(resolvedValueParam, Property(srcParam, "Status")),
@@ -79,18 +79,25 @@ namespace FastExpressionCompiler.IssueTests
                 srcParam
             );
 
-            var src = new OrderWithNullableStatus
-            {
-                Status = Status.InProgress
-            };
+            e.PrintCSharp();
 
-            var compiled = expression.CompileSys();
-            var dest = compiled(src);
-            Assert.AreEqual(Status.InProgress, dest.Status);
+            var inProgress = new OrderWithNullableStatus { Status = Status.InProgress };
+            var complete = new OrderWithNullableStatus { Status = Status.Complete };
 
-            var fastCompiled = expression.CompileFast(true);
-            dest = fastCompiled(src);
+            var fs = e.CompileSys();
+            fs.PrintIL();
+            
+            var dest = fs(inProgress);
             Assert.AreEqual(Status.InProgress, dest.Status);
+            dest = fs(complete);
+            Assert.AreEqual(Status.Complete, dest.Status);
+
+            var f = e.CompileFast(true);
+            f.PrintIL();
+            dest = f(inProgress);
+            Assert.AreEqual(Status.InProgress, dest.Status);
+            dest = f(complete);
+            Assert.AreEqual(Status.Complete, dest.Status);
         }
     }
 }

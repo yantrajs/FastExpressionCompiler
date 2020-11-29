@@ -3,7 +3,7 @@ image:
   - Ubuntu
   - macOS
 
-version: 3.0.0-preview-04-b{build}
+version: 3.0.0-preview-05-b{build}
 
 test: off
 
@@ -19,7 +19,7 @@ for:
         - image: Visual Studio 2019
 
     build_script:
-      - build.bat
+      - build_with_packaging.bat
 
     artifacts:
       - path: .\.dist\*.nupkg

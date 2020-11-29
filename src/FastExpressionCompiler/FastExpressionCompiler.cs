@@ -82,7 +82,6 @@ namespace FastExpressionCompiler
         string CSharpString { get; }
     }
 
-
     /// <summary>Compiles expression to delegate ~20 times faster than Expression.Compile.
     /// Partial to extend with your things when used as source file.</summary>
     // ReSharper disable once PartialTypeWithSinglePart
@@ -388,7 +387,7 @@ namespace FastExpressionCompiler
 
         /// <summary>Tries to compile expression to "static" delegate, skipping the step of collecting the closure object.</summary>
         public static TDelegate TryCompileWithoutClosure<TDelegate>(this LambdaExpression lambdaExpr, 
-            CompilerFlags flags = CompilerFlags.Default) where TDelegate : class // todo: @wip use the flags
+            CompilerFlags flags = CompilerFlags.Default) where TDelegate : class
         {
             var closureInfo = new ClosureInfo(ClosureStatus.UserProvided);
 #if LIGHT_EXPRESSION
@@ -858,13 +857,13 @@ namespace FastExpressionCompiler
         public static readonly ArrayClosure EmptyArrayClosure = new ArrayClosure(null);
  
         public static FieldInfo ArrayClosureArrayField =
-            typeof(ArrayClosure).GetTypeInfo().GetDeclaredField(nameof(ArrayClosure.ConstantsAndNestedLambdas));
+            typeof(ArrayClosure).GetField(nameof(ArrayClosure.ConstantsAndNestedLambdas));
 
         public static FieldInfo ArrayClosureWithNonPassedParamsField =
-            typeof(ArrayClosureWithNonPassedParams).GetTypeInfo().GetDeclaredField(nameof(ArrayClosureWithNonPassedParams.NonPassedParams));
+            typeof(ArrayClosureWithNonPassedParams).GetField(nameof(ArrayClosureWithNonPassedParams.NonPassedParams));
 
-        private static ConstructorInfo[] _nonPassedParamsArrayClosureCtors =
-            typeof(ArrayClosureWithNonPassedParams).GetTypeInfo().DeclaredConstructors.AsArray();
+        private static ConstructorInfo[] _nonPassedParamsArrayClosureCtors = typeof(ArrayClosureWithNonPassedParams).GetConstructors();
+
         public static ConstructorInfo ArrayClosureWithNonPassedParamsConstructor = _nonPassedParamsArrayClosureCtors[0];
 
         public static ConstructorInfo ArrayClosureWithNonPassedParamsConstructorWithoutConstants = _nonPassedParamsArrayClosureCtors[1];
@@ -941,8 +940,7 @@ namespace FastExpressionCompiler
 
         internal static class CurryClosureFuncs
         {
-            public static readonly MethodInfo[] Methods =
-                typeof(CurryClosureFuncs).GetTypeInfo().DeclaredMethods.AsArray();
+            public static readonly MethodInfo[] Methods = typeof(CurryClosureFuncs).GetMethods();
 
             public static Func<R> Curry<C, R>(Func<C, R> f, C c) =>
                 () => f(c);
@@ -965,12 +963,27 @@ namespace FastExpressionCompiler
             public static Func<T1, T2, T3, T4, T5, T6, R>
                 Curry<C, T1, T2, T3, T4, T5, T6, R>(Func<C, T1, T2, T3, T4, T5, T6, R> f, C c) =>
                 (t1, t2, t3, t4, t5, t6) => f(c, t1, t2, t3, t4, t5, t6);
+
+            public static Func<T1, T2, T3, T4, T5, T6, T7, R>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, R>(Func<C, T1, T2, T3, T4, T5, T6, T7, R> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7) => f(c, t1, t2, t3, t4, t5, t6, t7);
+
+            public static Func<T1, T2, T3, T4, T5, T6, T7, T8, R>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8, R>(Func<C, T1, T2, T3, T4, T5, T6, T7, T8, R> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8) => f(c, t1, t2, t3, t4, t5, t6, t7, t8);
+
+            public static Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, R>(Func<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, R> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8, t9) => f(c, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+
+            public static Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>(Func<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => f(c, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
         }
 
         internal static class CurryClosureActions
         {
-            public static readonly MethodInfo[] Methods =
-                typeof(CurryClosureActions).GetTypeInfo().DeclaredMethods.AsArray();
+            public static readonly MethodInfo[] Methods = typeof(CurryClosureActions).GetMethods();
 
             public static Action Curry<C>(Action<C> a, C c) =>
                 () => a(c);
@@ -993,13 +1006,29 @@ namespace FastExpressionCompiler
             public static Action<T1, T2, T3, T4, T5, T6>
                 Curry<C, T1, T2, T3, T4, T5, T6>(Action<C, T1, T2, T3, T4, T5, T6> f, C c) =>
                 (t1, t2, t3, t4, t5, t6) => f(c, t1, t2, t3, t4, t5, t6);
+
+            public static Action<T1, T2, T3, T4, T5, T6, T7>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7>(Action<C, T1, T2, T3, T4, T5, T6, T7> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7) => f(c, t1, t2, t3, t4, t5, t6, t7);
+
+            public static Action<T1, T2, T3, T4, T5, T6, T7, T8>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8>(Action<C, T1, T2, T3, T4, T5, T6, T7, T8> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8) => f(c, t1, t2, t3, t4, t5, t6, t7, t8);
+
+            public static Action<T1, T2, T3, T4, T5, T6, T7, T8, T9>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8, T9>(Action<C, T1, T2, T3, T4, T5, T6, T7, T8, T9> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8, t9) => f(c, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+
+            public static Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
+                Curry<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(Action<C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> f, C c) =>
+                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => f(c, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
         }
 
 #region Collect Bound Constants
 
         /// Helps to identify constants as the one to be put into the Closure
-        public static bool IsClosureBoundConstant(object value, TypeInfo type) =>
-            value is Delegate || 
+        public static bool IsClosureBoundConstant(object value, Type type) =>
+            value is Delegate || type.IsArray || 
             !type.IsPrimitive && !type.IsEnum && value is string == false && value is Type == false && value is decimal == false;
 
         // @paramExprs is required for nested lambda compilation
@@ -1027,9 +1056,8 @@ namespace FastExpressionCompiler
                         if (value != null)
                         {
                             // todo: @perf find the way to speed-up this
-
                             var valueType = value.GetType();
-                            if (IsClosureBoundConstant(value, valueType.GetTypeInfo()))
+                            if (IsClosureBoundConstant(value, valueType))
                                 closure.AddConstantOrIncrementUsageCount(value, valueType);
                         }
 
@@ -1612,7 +1640,7 @@ namespace FastExpressionCompiler
             TryCatch = 1 << 8,
             InstanceCall = Call | InstanceAccess,
             CtorCall = Call | (1 << 9),
-            ArrayIndex = 1 << 10
+            IndexAccess = 1 << 10
         }
 
         internal static bool IgnoresResult(this ParentFlags parent) => (parent & ParentFlags.IgnoreResult) != 0;
@@ -1622,26 +1650,11 @@ namespace FastExpressionCompiler
         /// to normal and slow Expression.Compile.</summary>
         private static class EmittingVisitor
         {
-#if NETSTANDARD1_1 || NETSTANDARD1_2 || NETSTANDARD1_3 || NETSTANDARD1_4 || NETSTANDARD1_5 || NETSTANDARD1_6
-            private static readonly MethodInfo _getTypeFromHandleMethod =
-                typeof(Type).GetTypeInfo().GetDeclaredMethod("GetTypeFromHandle");
-
-            private static readonly MethodInfo _objectEqualsMethod = GetObjectEquals();
-            private static MethodInfo GetObjectEquals()
-            {
-                var ms = typeof(object).GetTypeInfo().GetDeclaredMethods("Equals");
-                foreach (var m in ms)
-                    if (m.GetParameters().Length == 2)
-                        return m;
-                throw new InvalidOperationException("object.Equals is not found");
-            }
-#else
             private static readonly MethodInfo _getTypeFromHandleMethod =
                 ((Func<RuntimeTypeHandle, Type>)Type.GetTypeFromHandle).Method;
 
             private static readonly MethodInfo _objectEqualsMethod =
                 ((Func<object, object, bool>)object.Equals).Method;
-#endif
 
 #if LIGHT_EXPRESSION
             public static bool TryEmit(Expression expr, IParameterProvider paramExprs,
@@ -1688,7 +1701,7 @@ namespace FastExpressionCompiler
                         case ExpressionType.ArrayIndex:
                             var arrIndexExpr = (BinaryExpression)expr;
                             return TryEmit(arrIndexExpr.Left,  paramExprs, il, ref closure, setup, parent) 
-                                && TryEmit(arrIndexExpr.Right, paramExprs, il, ref closure, setup, parent | ParentFlags.ArrayIndex) // #265
+                                && TryEmit(arrIndexExpr.Right, paramExprs, il, ref closure, setup, parent | ParentFlags.IndexAccess) // #265
                                 && TryEmitArrayIndex(expr.Type, il, parent, ref closure);
 
                         case ExpressionType.ArrayLength:
@@ -1708,11 +1721,14 @@ namespace FastExpressionCompiler
 
                             if (constExpr.Value == null)
                             {
-                                il.Emit(OpCodes.Ldnull);
+                                if (constExpr.Type.IsValueType)
+                                    EmitLoadLocalVariable(il, InitValueTypeVariable(il, constExpr.Type)); // yep, this is a proper way to emit the Nullable null
+                                else
+                                    il.Emit(OpCodes.Ldnull);
                                 return true;
                             }
 
-                            return TryEmitNotNullConstant(closure.ContainsConstantsOrNestedLambdas(),
+                            return TryEmitConstantOfNotNullValue(closure.ContainsConstantsOrNestedLambdas(),
                                 constExpr.Type, constExpr.Value, il, ref closure);
 
                         case ExpressionType.Call:
@@ -1944,7 +1960,7 @@ namespace FastExpressionCompiler
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (newExpr.Constructor != null)
                     il.Emit(OpCodes.Newobj, newExpr.Constructor);
-                else if (newExpr.Type.IsValueType())
+                else if (newExpr.Type.IsValueType)
                     EmitLoadLocalVariable(il, InitValueTypeVariable(il, newExpr.Type));
                 else
                     return false;
@@ -2001,22 +2017,19 @@ namespace FastExpressionCompiler
                 if (indexerProp != null)
                     indexerPropGetter = indexerProp.DeclaringType.FindPropertyGetMethod(indexerProp.Name);
 
-                if (indexArgCount > 0)
+                var p = parent | ParentFlags.IndexAccess;
+                if (indexerPropGetter == null)
                 {
-                    if (indexerPropGetter == null) 
-                    {
-                        for (var i = 0; i < indexArgCount; i++)
-                            if (!TryEmit(indexArgs.GetArgument(i), paramExprs, il, ref closure, setup, parent, -1))
-                                return false;
-                    }
-                    else
-                    {
-                        var types = indexerPropGetter.GetParameters();
-                        for (var i = 0; i < indexArgCount; i++)
-                            if (!TryEmit(indexArgs.GetArgument(i), paramExprs, il, ref closure, setup, parent,
-                                types[i].ParameterType.IsByRef ? i : -1))
-                                return false;
-                    }
+                    for (var i = 0; i < indexArgCount; i++)
+                        if (!TryEmit(indexArgs.GetArgument(i), paramExprs, il, ref closure, setup, p, -1))
+                            return false;
+                }
+                else
+                {
+                    var types = indexerPropGetter.GetParameters();
+                    for (var i = 0; i < indexArgCount; i++)
+                        if (!TryEmit(indexArgs.GetArgument(i), paramExprs, il, ref closure, setup, p, types[i].ParameterType.IsByRef ? i : -1))
+                            return false;
                 }
 
                 if (indexerPropGetter != null)
@@ -2129,7 +2142,7 @@ namespace FastExpressionCompiler
                     return false;
 
                 var leftType = left.Type;
-                if (leftType.IsValueType()) // Nullable -> It's the only ValueType comparable to null
+                if (leftType.IsValueType) // Nullable -> It's the only ValueType comparable to null
                 {
                     var varIndex = EmitStoreLocalVariableAndLoadItsAddress(il, leftType);
                     il.Emit(OpCodes.Call, leftType.FindNullableHasValueGetterMethod());
@@ -2159,7 +2172,7 @@ namespace FastExpressionCompiler
 
                 if (right.Type != exprObj.Type)
                 {
-                    if (right.Type.IsValueType())
+                    if (right.Type.IsValueType)
                         il.Emit(OpCodes.Box, right.Type);
                 }
 
@@ -2299,9 +2312,9 @@ namespace FastExpressionCompiler
                     var isArgByRef = byRefIndex != -1;
                     closure.LastEmitIsAddress = 
                         !isParamByRef && isArgByRef ||
-                        !isParamByRef && paramType.IsValueType() &&
-                        ((parent & ParentFlags.InstanceCall) == ParentFlags.InstanceCall || 
-                         (parent & ParentFlags.MemberAccess) != 0);
+                        !isParamByRef && paramType.IsValueType &&
+                         (parent & ParentFlags.IndexAccess) == 0 && // #281
+                        ((parent & ParentFlags.InstanceCall) == ParentFlags.InstanceCall || (parent & ParentFlags.MemberAccess) != 0);
 
                     if ((closure.Status & ClosureStatus.ShouldBeStaticMethod) == 0)
                         ++paramIndex; // shift parameter index by one, because the first one will be closure
@@ -2324,7 +2337,7 @@ namespace FastExpressionCompiler
 
                     if (isParamByRef) 
                     {
-                        if (paramType.IsValueType())
+                        if (paramType.IsValueType)
                         {
                             if ((parent & ParentFlags.Call) != 0 && 
                                 // #248 - skip the cases with `ref param.Field` were we are actually want to 
@@ -2353,10 +2366,13 @@ namespace FastExpressionCompiler
                 if (varIndex != -1)
                 {
                     if (byRefIndex != -1 ||
-                        paramType.IsValueType() && 
-                        (parent & ParentFlags.ArrayIndex) == 0 && // #265
+                        paramType.IsValueType && 
+                        (parent & ParentFlags.IndexAccess) == 0 && // #265, #281
                         (parent & (ParentFlags.MemberAccess | ParentFlags.InstanceAccess)) != 0)
-                        EmitLoadLocalVariableAddress(il, varIndex);
+                        {
+                            EmitLoadLocalVariableAddress(il, varIndex);
+                            closure.LastEmitIsAddress = true;
+                        }
                     else
                         EmitLoadLocalVariable(il, varIndex);
                     return true;
@@ -2365,6 +2381,7 @@ namespace FastExpressionCompiler
                 if (isParamByRef)
                 {
                     EmitLoadLocalVariableAddress(il, byRefIndex);
+                    //todo: @bug? `closure.LastEmitIsAddress = true;` should we do it too as in above code with the variable 
                     return true;
                 }
 
@@ -2384,7 +2401,7 @@ namespace FastExpressionCompiler
                 il.Emit(OpCodes.Ldelem_Ref);
 
                 // source type is object, NonPassedParams is object array
-                if (paramType.IsValueType())
+                if (paramType.IsValueType)
                     il.Emit(OpCodes.Unbox_Any, paramType);
 
                 return true;
@@ -2436,7 +2453,7 @@ namespace FastExpressionCompiler
                 if (expr.NodeType == ExpressionType.TypeAs)
                 {
                     il.Emit(OpCodes.Isinst, exprType);
-                    if (exprType.IsValueType())
+                    if (exprType.IsValueType)
                         il.Emit(OpCodes.Unbox_Any, exprType);
                 }
                 else if (expr.NodeType == ExpressionType.IsFalse)
@@ -2634,7 +2651,7 @@ namespace FastExpressionCompiler
 
                 if (sourceType == targetType || targetType == typeof(object))
                 {
-                    if (targetType == typeof(object) && sourceType.IsValueType())
+                    if (targetType == typeof(object) && sourceType.IsValueType)
                         il.Emit(OpCodes.Box, sourceType);
                     if (IgnoresResult(parent))
                         il.Emit(OpCodes.Pop);
@@ -2643,7 +2660,7 @@ namespace FastExpressionCompiler
 
                 // check implicit / explicit conversion operators on source and target types
                 // for non-primitives and for non-primitive nullable - #73
-                if (!sourceTypeIsNullable && !sourceType.IsPrimitive())
+                if (!sourceTypeIsNullable && !sourceType.IsPrimitive)
                 {
                     var actualTargetType = targetTypeIsNullable ? underlyingNullableTargetType : targetType;
                     var convertOpMethod = method ?? sourceType.FindConvertOperator(sourceType, actualTargetType);
@@ -2681,7 +2698,7 @@ namespace FastExpressionCompiler
                     }
                 }
 
-                if (!targetTypeIsNullable && !targetType.IsPrimitive())
+                if (!targetTypeIsNullable && !targetType.IsPrimitive)
                 {
                     var actualSourceType = sourceTypeIsNullable ? underlyingNullableSourceType : sourceType;
 
@@ -2720,7 +2737,7 @@ namespace FastExpressionCompiler
                     }
                 }
 
-                if (sourceType == typeof(object) && targetType.IsValueType())
+                if (sourceType == typeof(object) && targetType.IsValueType)
                 {
                     il.Emit(OpCodes.Unbox_Any, targetType);
                 }
@@ -2817,11 +2834,11 @@ namespace FastExpressionCompiler
                 return true;
             }
 
-            private static bool TryEmitNotNullConstant(
+            private static bool TryEmitConstantOfNotNullValue(
                 bool considerClosure, Type exprType, object constantValue, ILGenerator il, ref ClosureInfo closure)
             {
                 var constValueType = constantValue.GetType();
-                if (considerClosure && IsClosureBoundConstant(constantValue, constValueType.GetTypeInfo()))
+                if (considerClosure && IsClosureBoundConstant(constantValue, constValueType))
                 {
                     var constItems = closure.Constants.Items;
                     var constIndex = closure.Constants.Count - 1;
@@ -2838,7 +2855,7 @@ namespace FastExpressionCompiler
                         il.Emit(OpCodes.Ldloc_0); // load constants array from the 0 variable // todo: @incomplete until we optimize for a single constant case - then we need a check here for number of constants
                         EmitLoadConstantInt(il, constIndex);
                         il.Emit(OpCodes.Ldelem_Ref);
-                        if (exprType.IsValueType())
+                        if (exprType.IsValueType)
                             il.Emit(OpCodes.Unbox_Any, exprType);
                     }
                 }
@@ -2858,7 +2875,7 @@ namespace FastExpressionCompiler
                     }
 
                     // get raw enum type to light
-                    if (constValueType.GetTypeInfo().IsEnum)
+                    if (constValueType.IsEnum)
                         constValueType = Enum.GetUnderlyingType(constValueType);
 
                     if (!TryEmitNumberConstant(il, constantValue, constValueType))
@@ -2867,10 +2884,10 @@ namespace FastExpressionCompiler
 
                 var underlyingNullableType = Nullable.GetUnderlyingType(exprType);
                 if (underlyingNullableType != null)
-                    il.Emit(OpCodes.Newobj, exprType.GetTypeInfo().DeclaredConstructors.GetFirst());
+                    il.Emit(OpCodes.Newobj, exprType.GetConstructors().GetFirst());
 
                 // boxing the value type, otherwise we can get a strange result when 0 is treated as Null.
-                else if (exprType == typeof(object) && constValueType.IsValueType())
+                else if (exprType == typeof(object) && constValueType.IsValueType)
                     il.Emit(OpCodes.Box, constantValue.GetType()); // using normal type for Enum instead of underlying type
 
                 return true;
@@ -3000,14 +3017,14 @@ namespace FastExpressionCompiler
                 int varIndex;
                 for (var i = 0; i < constCount; i++)
                 {
-                    if (constUsage[i] > 1) // todo: @incomplete should we proceed to do this or simplify an remove the usages for the closure info?
+                    if (constUsage[i] > 1) // todo: @incomplete should we proceed to do this or simplify and remove the usages for the closure info?
                     {
                         il.Emit(OpCodes.Ldloc_0);// SHOULD BE always at 0 locaton; load array field variable on the stack
                         EmitLoadConstantInt(il, i);
                         il.Emit(OpCodes.Ldelem_Ref);
 
                         var varType = constItems[i].GetType();
-                        if (varType.IsValueType())
+                        if (varType.IsValueType)
                             il.Emit(OpCodes.Unbox_Any, varType);
 
                         varIndex = il.GetNextLocalVarIndex(varType);
@@ -3053,13 +3070,13 @@ namespace FastExpressionCompiler
 
                 if (value == decimal.MinValue)
                 {
-                    il.Emit(OpCodes.Ldsfld, typeof(decimal).GetTypeInfo().GetDeclaredField(nameof(decimal.MinValue)));
+                    il.Emit(OpCodes.Ldsfld, typeof(decimal).GetField(nameof(decimal.MinValue)));
                     return;
                 }
 
                 if (value == decimal.MaxValue)
                 {
-                    il.Emit(OpCodes.Ldsfld, typeof(decimal).GetTypeInfo().GetDeclaredField(nameof(decimal.MaxValue)));
+                    il.Emit(OpCodes.Ldsfld, typeof(decimal).GetField(nameof(decimal.MaxValue)));
                     return;
                 }
 
@@ -3154,7 +3171,7 @@ namespace FastExpressionCompiler
                 EmitLoadConstantInt(il, elemCount); // emit the length of the array calculated from the number of initializer elements
                 il.Emit(OpCodes.Newarr, elemType);
 
-                var isElemOfValueType = elemType.IsValueType();
+                var isElemOfValueType = elemType.IsValueType;
                 for (var i = 0; i < elemCount; i++)
                 {
                     il.Emit(OpCodes.Dup);
@@ -3178,7 +3195,7 @@ namespace FastExpressionCompiler
 
             private static bool TryEmitArrayIndex(Type exprType, ILGenerator il, ParentFlags parent, ref ClosureInfo closure)
             {
-                if (!exprType.IsValueType())
+                if (!exprType.IsValueType)
                     il.Emit(OpCodes.Ldelem_Ref);
                 else if ((parent & (ParentFlags.MemberAccess | ParentFlags.Call)) == 0)
                     il.Emit(OpCodes.Ldelem, exprType);
@@ -3199,7 +3216,7 @@ namespace FastExpressionCompiler
 #endif
             {
                 var valueVarIndex = -1;
-                if (expr.Type.IsValueType())
+                if (expr.Type.IsValueType)
                     valueVarIndex = il.GetNextLocalVarIndex(expr.Type);
 
                 var newExpr = expr.NewExpression;
@@ -3231,7 +3248,7 @@ namespace FastExpressionCompiler
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (newExpr.Constructor != null)
                         il.Emit(OpCodes.Newobj, newExpr.Constructor);
-                    else if (newExpr.Type.IsValueType())
+                    else if (newExpr.Type.IsValueType)
                     {
                         if (valueVarIndex == -1)
                             valueVarIndex = il.GetNextLocalVarIndex(expr.Type);
@@ -3574,7 +3591,7 @@ namespace FastExpressionCompiler
                             il.Emit(OpCodes.Ldfld, ArrayClosureWithNonPassedParamsField);
                             EmitLoadConstantInt(il, nonPassedParamIndex);
                             EmitLoadLocalVariable(il, valueVarIndex);
-                            if (expr.Type.IsValueType())
+                            if (expr.Type.IsValueType)
                                 il.Emit(OpCodes.Box, expr.Type);
                             il.Emit(OpCodes.Stelem_Ref); // put the variable into array
                             EmitLoadLocalVariable(il, valueVarIndex); // todo: @perf what if we just dup the `valueVar`?
@@ -3588,7 +3605,7 @@ namespace FastExpressionCompiler
                             if (!TryEmit(right, paramExprs, il, ref closure, setup, flags))
                                 return false;
 
-                            if (expr.Type.IsValueType())
+                            if (expr.Type.IsValueType)
                                 il.Emit(OpCodes.Box, expr.Type);
                             il.Emit(OpCodes.Stelem_Ref); // put the variable into array
                         }
@@ -3703,7 +3720,7 @@ namespace FastExpressionCompiler
 
                 if (indexExpr.Arguments.Count == 1) // one dimensional array
                 {
-                    if (elementType.IsValueType())
+                    if (elementType.IsValueType)
                         il.Emit(OpCodes.Stelem, elementType);
                     else
                         il.Emit(OpCodes.Stelem_Ref);
@@ -3734,7 +3751,7 @@ namespace FastExpressionCompiler
                     if (!TryEmit(objExpr, paramExprs, il, ref closure, setup, flags | ParentFlags.InstanceAccess))
                         return false;
 
-                    objIsValueType = objExpr.Type.IsValueType();
+                    objIsValueType = objExpr.Type.IsValueType;
                     if (objIsValueType && objExpr.NodeType != ExpressionType.Parameter && !closure.LastEmitIsAddress)
                         EmitStoreLocalVariableAndLoadItsAddress(il, objExpr.Type);
                 }
@@ -3796,7 +3813,7 @@ namespace FastExpressionCompiler
                         // Parameter should be excluded because it already loads an address via `LDARGA`, and you don't need to.
                         // And for field access no need to load address, cause the field stored on stack nearby
                         if (!closure.LastEmitIsAddress &&
-                            instanceExpr.NodeType != ExpressionType.Parameter && instanceExpr.Type.IsValueType())
+                            instanceExpr.NodeType != ExpressionType.Parameter && instanceExpr.Type.IsValueType)
                             EmitStoreLocalVariableAndLoadItsAddress(il, instanceExpr.Type);
                     }
 
@@ -3824,7 +3841,7 @@ namespace FastExpressionCompiler
                             il.Emit(OpCodes.Dup);
 
                         var isByAddress = false;
-                        if (field.FieldType.IsValueType()) 
+                        if (field.FieldType.IsValueType) 
                         {
                             if ((parent & ParentFlags.InstanceAccess) != 0)
                                 isByAddress = true;
@@ -3840,7 +3857,7 @@ namespace FastExpressionCompiler
                     {
                         var fieldValue = field.GetValue(null);
                         if (fieldValue != null)
-                            return TryEmitNotNullConstant(false, field.FieldType, fieldValue, il, ref closure);
+                            return TryEmitConstantOfNotNullValue(false, field.FieldType, fieldValue, il, ref closure);
 
                         il.Emit(OpCodes.Ldnull);
                     }
@@ -3929,7 +3946,7 @@ namespace FastExpressionCompiler
                         else
                             il.Emit(OpCodes.Ldarg_S, (byte)(1 + outerParamIndex));
 
-                        if (nestedParam.Type.IsValueType())
+                        if (nestedParam.Type.IsValueType)
                             il.Emit(OpCodes.Box, nestedParam.Type);
                     }
                     else // load parameter from outer closure or from the local variables
@@ -3941,7 +3958,7 @@ namespace FastExpressionCompiler
                         if (outerLocalVarIndex != -1) // it's a local variable
                         {
                             EmitLoadLocalVariable(il, outerLocalVarIndex);
-                            if (nestedParam.Type.IsValueType()) // don't forget to box the value type when we store it into object array, (fixes #255)
+                            if (nestedParam.Type.IsValueType) // don't forget to box the value type when we store it into object array, (fixes #255)
                                 il.Emit(OpCodes.Box, nestedParam.Type);
                         }
                         else // it's a parameter from the outer closure
@@ -4148,7 +4165,7 @@ namespace FastExpressionCompiler
 
                 if (leftOpType != rightOpType)
                 {
-                    if (leftOpType.IsClass() && rightOpType.IsClass() &&
+                    if (leftOpType.IsClass && rightOpType.IsClass &&
                         (leftOpType == typeof(object) || rightOpType == typeof(object)))
                     {
                         if (expressionType == ExpressionType.Equal)
@@ -4197,7 +4214,7 @@ namespace FastExpressionCompiler
                         return false;
 
                     // todo: for now handling only parameters of the same type
-                    var methods = leftOpTypeInfo.DeclaredMethods.AsArray();
+                    var methods = leftOpTypeInfo.GetMethods();
                     for (var i = 0; i < methods.Length; i++)
                     {
                         var m = methods[i];
@@ -4414,12 +4431,12 @@ namespace FastExpressionCompiler
 
             private static bool TryEmitArithmeticOperation(BinaryExpression expr, ExpressionType exprNodeType, Type exprType, ILGenerator il)
             {
-                if (!exprType.IsPrimitive())
+                if (!exprType.IsPrimitive)
                 {
                     if (exprType.IsNullable())
                         exprType = Nullable.GetUnderlyingType(exprType);
 
-                    if (!exprType.IsPrimitive())
+                    if (!exprType.IsPrimitive)
                     {
                         MethodInfo method = null;
                         if (exprType == typeof(string))
@@ -4428,7 +4445,7 @@ namespace FastExpressionCompiler
                             if (expr.Left.Type != expr.Right.Type || expr.Left.Type != typeof(string))
                                 paraType = typeof(object);
 
-                            var methods = typeof(string).GetTypeInfo().DeclaredMethods.AsArray();
+                            var methods = typeof(string).GetMethods();
                             for (var i = 0; i < methods.Length; i++)
                             {
                                 var m = methods[i];
@@ -4455,7 +4472,7 @@ namespace FastExpressionCompiler
 
                             if (methodName != null)
                             {
-                                var methods = exprType.GetTypeInfo().DeclaredMethods.AsArray();
+                                var methods = exprType.GetMethods();
                                 for (var i = 0; method == null && i < methods.Length; i++)
                                 {
                                     var m = methods[i];
@@ -4600,7 +4617,7 @@ namespace FastExpressionCompiler
                 // `x != 0`     => `Brfalse`
                 
                 var useBrFalseOrTrue = -1; // 0 - is comparison with Zero (0, null, false), 1 - is comparison with (true)
-                
+                Type nullOfValueType = null;
                 if (testExpr is BinaryExpression b)
                 {
                     if (b.NodeType == ExpressionType.Equal || b.NodeType == ExpressionType.NotEqual)
@@ -4615,7 +4632,10 @@ namespace FastExpressionCompiler
                                 // The null comparison for the nullable is actually a `nullable.HasValue` check,
                                 // which implies member access on nullable struct - therefore loading it by address
                                 if (b.Left.Type.IsNullable())
+                                {
+                                    nullOfValueType = b.Left.Type;
                                     parent |= ParentFlags.MemberAccess;
+                                }
                             }
                             else if (constVal is bool rcb)
                             {
@@ -4637,7 +4657,10 @@ namespace FastExpressionCompiler
                             {
                                 useBrFalseOrTrue = 0;
                                 if (b.Right.Type.IsNullable())
+                                {
+                                    nullOfValueType = b.Right.Type;
                                     parent |= ParentFlags.MemberAccess;
+                                }
                             }
                             else if (constVal is bool lcb)
                             {
@@ -4661,18 +4684,17 @@ namespace FastExpressionCompiler
                         return false;
                 }
 
-                // The cases to branch to the `IfFalse` expression:
-                // - `x == true`  => `Brfalse`
-                // - `x != true`  => `Brtrue`
-                // - `x == false` => `Brtrue`
-                // - `x != false` => `Brfalse`
-                // - `x == null`  => `Brtrue`
-                // - `x != null`  => `Brfalse`
+                if (nullOfValueType != null)
+                {
+                    if (!closure.LastEmitIsAddress)
+                        EmitStoreLocalVariableAndLoadItsAddress(il, nullOfValueType);
+                    il.Emit(OpCodes.Call, nullOfValueType.FindNullableHasValueGetterMethod());
+                }
 
                 var labelIfFalse = il.DefineLabel();
                 if (testExpr.NodeType == ExpressionType.Equal    && useBrFalseOrTrue == 0 ||
                     testExpr.NodeType == ExpressionType.NotEqual && useBrFalseOrTrue == 1)
-                    il.Emit(OpCodes.Brtrue,  labelIfFalse);
+                    il.Emit(OpCodes.Brtrue, labelIfFalse);
                 else
                     il.Emit(OpCodes.Brfalse, labelIfFalse);
 
@@ -4873,36 +4895,30 @@ namespace FastExpressionCompiler
     // in order to prevent conflicts with YOUR helpers with standard names
     internal static class Tools
     {
-        internal static bool IsValueType(this Type type) => type.GetTypeInfo().IsValueType;
-        internal static bool IsPrimitive(this Type type) => type.GetTypeInfo().IsPrimitive;
-        internal static bool IsClass(this Type type) => type.GetTypeInfo().IsClass;
-
         internal static bool IsUnsigned(this Type type) =>
             type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong);
 
         internal static bool IsNullable(this Type type) =>
-            type.GetTypeInfo().IsGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>);
+            type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         internal static MethodInfo FindMethod(this Type type, string methodName)
         {
-            var typeInfo = type.GetTypeInfo();
-            var methods = typeInfo.DeclaredMethods.AsArray();
+            var methods = type.GetMethods();
             for (var i = 0; i < methods.Length; i++)
                 if (methods[i].Name == methodName)
                     return methods[i];
 
-            return typeInfo.BaseType?.FindMethod(methodName);
+            return type.BaseType?.FindMethod(methodName);
         }
 
         internal static MethodInfo DelegateTargetGetterMethod = 
             typeof(Delegate).FindPropertyGetMethod("Target");
 
-        internal static MethodInfo FindDelegateInvokeMethod(this Type type) => 
-            type.GetTypeInfo().GetDeclaredMethod("Invoke");
+        internal static MethodInfo FindDelegateInvokeMethod(this Type type) => type.GetMethod("Invoke");
 
         internal static MethodInfo FindNullableGetValueOrDefaultMethod(this Type type)
         {
-            var methods = type.GetTypeInfo().DeclaredMethods.AsArray();
+            var methods = type.GetMethods();
             for (var i = 0; i < methods.Length; i++)
             {
                 var m = methods[i];
@@ -4921,7 +4937,7 @@ namespace FastExpressionCompiler
 
         internal static MethodInfo FindPropertyGetMethod(this Type propHolderType, string propName)
         {
-            var methods = propHolderType.GetTypeInfo().DeclaredMethods.AsArray();
+            var methods = propHolderType.GetMethods();
             for (var i = 0; i < methods.Length; i++)
             {
                 var method = methods[i];
@@ -4938,12 +4954,12 @@ namespace FastExpressionCompiler
                 }
             }
 
-            return propHolderType.GetTypeInfo().BaseType?.FindPropertyGetMethod(propName);
+            return propHolderType.BaseType?.FindPropertyGetMethod(propName);
         }
 
         internal static MethodInfo FindPropertySetMethod(this Type propHolderType, string propName)
         {
-            var methods = propHolderType.GetTypeInfo().DeclaredMethods.AsArray();
+            var methods = propHolderType.GetMethods();
             for (var i = 0; i < methods.Length; i++)
             {
                 var method = methods[i];
@@ -4960,12 +4976,12 @@ namespace FastExpressionCompiler
                 }
             }
 
-            return propHolderType.GetTypeInfo().BaseType?.FindPropertySetMethod(propName);
+            return propHolderType.BaseType?.FindPropertySetMethod(propName);
         }
 
         internal static MethodInfo FindConvertOperator(this Type type, Type sourceType, Type targetType)
         {
-            var methods = type.GetTypeInfo().DeclaredMethods.AsArray();
+            var methods = type.GetMethods();
             for (var i = 0; i < methods.Length; i++)
             {
                 var m = methods[i];
@@ -4985,7 +5001,7 @@ namespace FastExpressionCompiler
 
         internal static ConstructorInfo FindSingleParamConstructor(this Type type, Type paramType)
         {
-            var ctors = type.GetTypeInfo().DeclaredConstructors.AsArray();
+            var ctors = type.GetConstructors();
             for (var i = 0; i < ctors.Length; i++)
             {
                 var ctor = ctors[i];
@@ -5319,7 +5335,7 @@ namespace FastExpressionCompiler
             if (i != -1) 
                 return sb.Append("p[").Append(i)
                     .Append(" // (")
-                    .Append(!pe.Type.IsPrimitive && pe.Type.IsValueType() ? "[struct] " : string.Empty)
+                    .Append(!pe.Type.IsPrimitive && pe.Type.IsValueType ? "[struct] " : string.Empty)
                     .Append(pe.Type.ToCode(stripNamespace, printType))
                     .Append(' ').AppendName(pe.Name, pe.Type, pe).Append(')')
                     .NewLineIdent(lineIdent).Append(']');
@@ -5462,9 +5478,21 @@ namespace FastExpressionCompiler
                         sb.AppendTypeof(t, stripNamespace, printType);
                     else
                     {
-                        sb.Append(x.Value.ToCode(CodePrinter.DefaultConstantValueToCode, stripNamespace, printType));
-                        if (x.Value.GetType() != x.Type)
-                            sb.Append(", ").AppendTypeof(x.Type, stripNamespace, printType);
+                        // For the closure bound constant let's output `null` or default value with the comment for user to provide the actual value
+                        if (ExpressionCompiler.IsClosureBoundConstant(x.Value, x.Type)) 
+                        {
+                            if (x.Type.IsValueType)
+                                sb.Append("default(").Append(x.Type.ToCode(stripNamespace, printType)).Append(')');
+                            else // specifying the type for the Constant, otherwise we will lost it with the `Constant(default(MyClass))` which is equivalent to `Constant(null)`
+                                sb.Append("null, ").AppendTypeof(x.Type, stripNamespace, printType);
+                            sb.NewLineIdent(lineIdent).Append("// !!! Please provide the non-default value").NewLineIdent(lineIdent);
+                        }
+                        else 
+                        {
+                            sb.Append(x.Value.ToCode(CodePrinter.DefaultConstantValueToCode, stripNamespace, printType));
+                            if (x.Value.GetType() != x.Type)
+                                sb.Append(", ").AppendTypeof(x.Type, stripNamespace, printType);
+                        }
                     }
                     return sb.Append(')');
                 }
@@ -5483,7 +5511,7 @@ namespace FastExpressionCompiler
                     var x = (NewExpression)e;
                     var args = x.Arguments;
 
-                    if (args.Count == 0 && e.Type.IsValueType())
+                    if (args.Count == 0 && e.Type.IsValueType)
                         return sb.Append("New(").AppendTypeof(e.Type, stripNamespace, printType).Append(')');
 
                     sb.Append("New(/*").Append(args.Count).Append(" args*/");
@@ -6294,7 +6322,7 @@ namespace FastExpressionCompiler
         private static string GetCSharpName(this MemberInfo m)
         {
             var name = m.Name;
-            if (m is FieldInfo fi && m.DeclaringType.IsValueType())
+            if (m is FieldInfo fi && m.DeclaringType.IsValueType)
             {
                 // btw, `fi.IsSpecialName` returns `false` :/
                 if (name[0] == '<') // a backing field for the properties in struct, e.g. <Key>k__BackingField
@@ -6599,15 +6627,19 @@ namespace FastExpressionCompiler
             return sb.Append(" }))");
         }
 
-        private static string PruneNoNameSymbols(Type t, string s) =>
-            t.IsArray ? s.Replace("[]", "_arr") : 
-            t.IsGenericType ? s.Replace('<', '_').Replace('>', '_') : 
-            s;
+        private static string GetParameterOrVariableNameFromTheType(Type t, string s)
+        {
+            var dotIndex = s.LastIndexOf('.');
+            if (dotIndex != -1)
+                s = s.Substring(dotIndex + 1);
+            return (t.IsArray ? s.Replace("[]", "_arr") : 
+                t.IsGenericType ? s.Replace('<', '_').Replace('>', '_') : 
+                s).ToLowerInvariant();
+        }
 
         internal static StringBuilder AppendName<T>(this StringBuilder sb, string name, Type type, T identity) =>
             name != null ? sb.Append(name)
-                : sb.Append(type.ToCode(true, (t, s) => PruneNoNameSymbols(t, s)))
-                .Append("__").Append(identity.GetHashCode());
+                : sb.Append(type.ToCode(true, (t, s) => GetParameterOrVariableNameFromTheType(t, s))).Append("__").Append(identity.GetHashCode());
 
         /// <summary>Converts the <paramref name="type"/> into the proper C# representation.</summary>
         public static string ToCode(this Type type,
@@ -6791,9 +6823,7 @@ namespace FastExpressionCompiler
         private class ConstantValueToCode : CodePrinter.IObjectToCode
         {
             public string ToCode(object x, bool stripNamespace = false, Func<Type, string, string> printType = null) =>
-                "default(" +
-                // "// todo: @incomplete - the value should be provided by user " + Environment.NewLine + 
-                x.GetType().ToCode(stripNamespace, printType) + ")";
+                "default(" + x.GetType().ToCode(stripNamespace, printType) + ")";
         }
 
         internal static readonly CodePrinter.IObjectToCode DefaultConstantValueToCode = new ConstantValueToCode();
@@ -6820,6 +6850,9 @@ namespace FastExpressionCompiler
             bool stripNamespace = false, Func<Type, string, string> printType = null) =>
             $"new {itemType.ToCode(stripNamespace, printType)}[]{{{items.ToCommaSeparatedCode(notRecognizedToCode, stripNamespace, printType)}}}";
 
+        private static readonly Type[] TypesImplementedByArray =
+            typeof(object[]).GetInterfaces().Where(t => t.GetTypeInfo().IsGenericType).Select(t => t.GetGenericTypeDefinition()).ToArray();
+
         /// <summary>
         /// Prints a valid C# for known <paramref name="x"/>,
         /// otherwise uses passed <paramref name="notRecognizedToCode"/> or falls back to `ToString()`.
@@ -6845,13 +6878,16 @@ namespace FastExpressionCompiler
             var xType = x.GetType();
             var xTypeInfo = xType.GetTypeInfo();
 
-            if (x is IEnumerable e)
+            // check if item is implemented by array and then use the array initializer only for these types, 
+            // otherwise we may produce the array initializer but it will be incompatible with e.g. `List<T>`
+            if (xTypeInfo.IsArray ||
+                xTypeInfo.IsGenericType && TypesImplementedByArray.Contains(xType.GetGenericTypeDefinition()))
             {
                 var elemType = xTypeInfo.IsArray
                     ? xTypeInfo.GetElementType()
                     : xTypeInfo.GetGenericTypeParametersOrArguments().GetFirst();
                 if (elemType != null)
-                    return e.ToArrayInitializerCode(elemType, notRecognizedToCode);
+                    return ((IEnumerable)x).ToArrayInitializerCode(elemType, notRecognizedToCode);
             }
 
             // unwrap the Nullable struct

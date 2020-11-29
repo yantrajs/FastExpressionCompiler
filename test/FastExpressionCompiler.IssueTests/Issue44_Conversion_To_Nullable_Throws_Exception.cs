@@ -11,7 +11,7 @@ namespace FastExpressionCompiler.IssueTests
 #endif
 {
     [TestFixture]
-    public class Issue44_Conversion_To_Nullable_Throws_Exception
+    public class Issue44_Conversion_To_Nullable_Throws_Exception : ITest
     {
         public int Run()
         {
@@ -53,7 +53,7 @@ namespace FastExpressionCompiler.IssueTests
         {
             var expr = Lambda<Func<int?>>(Convert(Constant(null), typeof(int?)));
 
-            expr.PrintCSharpString();
+            expr.PrintCSharp();
 
             int? answer = expr.CompileFast(true).Invoke();
 
